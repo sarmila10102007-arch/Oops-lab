@@ -1,0 +1,58 @@
+ Medical Test Report Analyzer
+REFERENCE = {
+ "Hemoglobin (g/dL)": (13.0, 17.0),
+ "WBC Count (cells/uL)": (4000, 11000),
+ "Platelets (lakhs/uL)": (1.5, 4.5),
+ "Fasting Glucose (mg/dL)": (70, 100),
+ "Total Cholesterol (mg/dL)": (125, 200),
+ "Creatinine (mg/dL)": (0.7, 1.3),
+ "TSH (uIU/mL)": (0.4, 4.0),
+}
+PATIENT = {
+ "name": "Ravi Kumar", "age": 32, "gender": "Male",
+ "results": {
+ "Hemoglobin (g/dL)": 11.2,
+ "WBC Count (cells/uL)": 7800,
+ "Platelets (lakhs/uL)": 2.6,
+ "Fasting Glucose (mg/dL)": 118,
+ "Total Cholesterol (mg/dL)": 232,
+ "Creatinine (mg/dL)": 1.0,
+ "TSH (uIU/mL)": 2.3,
+ },
+}
+def classify(value, low, high):
+ if value < low:
+ return "LOW"
+ if value > high:
+ return "HIGH"
+ return "NORMAL"
+def analyze(patient):
+ report, abnormal = [], []
+ for test, value in patient["results"].items():
+ low, high = REFERENCE[test]
+ status = classify(value, low, high)
+ report.append((test, value, f"{low} - {high}", status))
+ if status != "NORMAL":
+ abnormal.append((test, status))
+ return report, abnormal
+def main():
+ report, abnormal = analyze(PATIENT)
+ print("=" * 66)
+ print(" MEDICAL TEST REPORT ANALYZER")
+ print("=" * 66)
+ print(f"Patient : {PATIENT['name']} Age: {PATIENT['age']} Gender: {PATIENT['gender']}")
+ print("-" * 66)
+ print(f"{'TEST':<28}{'VALUE':>8} {'REF RANGE':<14}{'STATUS':<8}")
+ print("-" * 66)
+ for test, value, rng, status in report:
+ print(f"{test:<28}{value:>8} {rng:<14}{status:<8}")
+ print("-" * 66)
+ print(f"Total tests: {len(report)} | Normal: {len(report)-len(abnormal)} | Abnormal: {len(abnormal)}")
+ if abnormal:
+ print("\nABNORMAL FINDINGS:")
+ for test, status in abnormal:
+ print(f" * {test} is {status}")
+ print("\nRESULT: Some values are outside normal range. Consult a doctor.")
+ else:
+ print("\nRESULT: All values are within normal range.")
+main()
